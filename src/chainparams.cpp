@@ -220,10 +220,6 @@ public:
 
         vFixedSeeds.clear();
         vSeeds.clear();
-        // vSeeds.push_back(CDNSSeedData("alexykot.me", "testnet-seed.alexykot.me"));
-        // vSeeds.push_back(CDNSSeedData("facilecoin.petertodd.org", "testnet-seed.facilecoin.petertodd.org"));
-        // vSeeds.push_back(CDNSSeedData("bluematt.me", "testnet-seed.bluematt.me"));
-        // vSeeds.push_back(CDNSSeedData("facilecoin.schildbach.de", "testnet-seed.facilecoin.schildbach.de"));
 
         base58Prefixes[PUBKEY_ADDRESS] = list_of(111);
         base58Prefixes[SCRIPT_ADDRESS] = list_of(196);
