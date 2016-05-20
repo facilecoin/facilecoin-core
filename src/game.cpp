@@ -161,7 +161,7 @@ time_t time_report_middles_per_sec;
 bool construct_sol(unsigned int *ssa, unsigned char idx, unsigned char level, unsigned int *sa,  unsigned int *mark, time_t s_time, time_t max_run_time, int current_board_side_size){
 
 	//unsigned int *h_SA = sa;
-	char pbuf[1024];
+	
 	time_t tdiff;
 	//int current_board_side_size = 4;
 	int current_board_size = current_board_side_size * current_board_side_size;
@@ -214,6 +214,7 @@ bool construct_sol(unsigned int *ssa, unsigned char idx, unsigned char level, un
 		//unsigned char marksa[128];
 		#if 0		
 		ofstream myfile;
+		char pbuf[1024];
 		
 		printf("Success!\n");
 		myfile.open("sol.txt",std::ofstream::out);
@@ -255,7 +256,7 @@ void uint256tochar(uint256 idata, unsigned char *odata){
 g-mix	
 *********************************************************************************************/
 uint256 g_mix(uint256 hash){
-	unsigned char idata[96], tdata[96], odata[32], odata_t[32];
+	unsigned char idata[96], tdata[96], odata[32];
 	uint256 t, t2;
 	int i;
 	//t1 = hash;
@@ -372,12 +373,12 @@ int get_min_whites( int target){
 
 	//int fixed_target = fix_target(target) >> 8;
 	//int target_major = (fixed_target >> 8) & 0xff;
-	int target_minor = get_target_minor(target);
+	unsigned int target_minor = get_target_minor(target);
 	int brd_size = get_brd_size(target);
 	
 	if(target_minor > SIZEOF_ARRAY(minor_diff_whites_lut) - 1)
 		target_minor = SIZEOF_ARRAY(minor_diff_whites_lut) - 1;
-	if(target_minor <= 0) target_minor = 0;
+	//if(target_minor <= 0) target_minor = 0;
 
 	return minor_diff_whites_lut[target_minor] * brd_size / 25;
 	
@@ -407,7 +408,6 @@ bool game_check_sol(uint256 block_hash, unsigned int nBits, GSol sol){
 	uint256 in_hash, t, t2;
 
 	int current_board_side_size = 4;
-	int current_board_size = 16;
 	
 	
 	
@@ -430,18 +430,20 @@ bool game_check_sol(uint256 block_hash, unsigned int nBits, GSol sol){
 	uint32_t nNonce = 0xa5a5a5a5;
 	//shape_s temp_shape;
     int brd_size = 4 * 4;
-	int ff_val, ff_max, white_count = 0;
+	int s_val, white_count = 0;
 	
 	
 	current_board_side_size = get_target_major(nBits);
 	if(current_board_side_size < 4) current_board_side_size = 4;
 	if(current_board_side_size > 64) current_board_side_size = 64;
     brd_size = get_brd_size(nBits);	
-	current_board_size = brd_size;
 	
 
 	
 	#ifdef GAME_DEBUG
+	int current_board_size = 16;
+	current_board_size = brd_size;
+	int s_max;
 	std::cout << "MAX_SHAPE_ENCODE: "<< MAX_SHAPE_ENCODE << "\n";
 	std::cout <<"MAX_SHAPE_ENCODE_WITH_WHITE_SHAPES: " <<  MAX_SHAPE_ENCODE_WITH_WHITE_SHAPES << "\n";
 	#endif
@@ -616,8 +618,8 @@ bool game_check_sol(uint256 block_hash, unsigned int nBits, GSol sol){
 	//std::cout << "sol_buf: " << pbuf << "whites: " << white_count << " block_height: " << height << "\n";
 	std::cout << "sol_buf: " << pbuf << "whites: " << white_count << "\n";
 	#endif
-	ff_val = calc_s(&shape_arry[0], current_board_side_size);	
-	if(ff_val == 0){
+	s_val = calc_s(&shape_arry[0], current_board_side_size);	
+	if(s_val == 0){
 		
 		
 		#ifdef DEBUG_DUMP_BLOCK_SOLS
@@ -661,7 +663,7 @@ bool game_run_main(uint256 *block_hash, unsigned int nBits, GSol *sol){
 	uint32_t nNonce = 0xa5a5a5a5;
 	ofstream myfile;
     int brd_size = 4 * 4;
-	int ff_val, ff_max, white_count = 0;
+	int white_count = 0;
 
 	current_board_side_size = get_target_major(nBits);
 	if(current_board_side_size < 4) current_board_side_size = 4;
@@ -673,6 +675,7 @@ bool game_run_main(uint256 *block_hash, unsigned int nBits, GSol *sol){
 	in_hash.SetHex(block_hash->GetHex());
 	//in_hash = block_hash;
 	#ifdef GAME_DEBUG
+	int s_val, s_max;
 	std::cout << "MAX_SHAPE_ENCODE: "<< MAX_SHAPE_ENCODE << "\n";
 	std::cout <<"MAX_SHAPE_ENCODE_WITH_WHITE_SHAPES: " <<  MAX_SHAPE_ENCODE_WITH_WHITE_SHAPES << "\n";
 	#endif
@@ -804,9 +807,9 @@ bool game_run_main(uint256 *block_hash, unsigned int nBits, GSol *sol){
 	#endif
 	calc_s(&shape_arry[0], current_board_side_size);
 	#ifdef GAME_DEBUG
-	//std::cout << "ff_val: " << ff_val << " ff_max: " << ff_max << "\n";
-	#endif
+	//std::cout << "s_val: " << s_val << " s_max: " << s_max << "\n";
 	std::time_t start_time = std::time(0);
+	#endif
 	
 	//unsigned int *h_SA = (unsigned int *)malloc(1024 * sizeof(int));
 	unsigned int h_SA[64 * 64 + 16];
@@ -838,9 +841,9 @@ bool game_run_main(uint256 *block_hash, unsigned int nBits, GSol *sol){
 	
 	if(found){
 		
-		std::time_t diff_time = std::time(0) - start_time;
 
 		#ifdef GAME_DEBUG
+		std::time_t diff_time = std::time(0) - start_time;
 		std::cout << "SOLUTION FOUND, after " << perm_count << " permutations in " << diff_time << "s, Solution dumped in file\n";
 		#endif
 		#ifdef GAME_SOL_VIA_FILE
