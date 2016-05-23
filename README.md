@@ -2,7 +2,9 @@
 It is strongly recommended to download binaries from facilecoin.org.
 Best alternative - compile core yourself.
 <br>
-The source is not yet clean enough (in regards to code elegance and copyrights), but it will compile.
+The source is not yet clean enough (in regards to code elegance and copyrights), but it will compile.<br>
+
+Tested on: Windows 7 (mingw), Ubuntu 14.04, CentOs 7, Debian 8.
 
 
 <h3> == Building under CentOs 7 (may apply to other linux distributions) == </h3>
