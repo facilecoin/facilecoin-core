@@ -214,7 +214,10 @@ bool CBlockTreeDB::LoadBlockIndexGuts()
                 pindexNew->sol         = diskindex.sol;
 
 				//LogPrintf("txdb.cpp->debug_sol() DUMP:\n%s\n", pindexNew->sol.ToString());
-                if ( 
+				
+		//fast loading splash screen		
+                int force_dbload_check = GetArg("-forcedbloadcheck", 0);
+                if ( force_dbload_check &&
 					//pindexNew->GetBlockHash() != Params().HashGenesisBlock()&&
 					!CheckProofOfWork(pindexNew->GetBlockHash(), pindexNew->nBits, pindexNew->sol))
                     return error("LoadBlockIndex() : CheckProofOfWork failed: %s", pindexNew->ToString());
