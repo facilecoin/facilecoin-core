@@ -267,7 +267,7 @@ bool check_pow_fast(uint256 hash, unsigned int nBits, GSol sol){
                                         break;
                                 }
                         if(found){
-                                std::cout << "Check block OK " << hash.ToString() << "\n";
+                                //std::cout << "Check block OK " << hash.ToString() << "\n";
                                 return true;                            
                         }
                 }
