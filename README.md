@@ -4,7 +4,9 @@ Best alternative - compile core yourself.
 <br>
 The source is not yet clean enough (in regards to code elegance and copyrights), but it will compile.<br>
 
-Tested on: Windows 7 (mingw), Ubuntu 14.04, CentOs 7, Debian 8.
+Tested on: Windows 7 (mingw), Ubuntu 14.04, CentOs 7, Debian 8.<br>
+<br>
+It is recommended for "full nodes" (as exchanges) to run daemon with "-usefastpow=0 -forcedbloadcheck=1" bypassing rc2-02 and rc2-03 fast load ability (but ensuring full check for each block).
 
 
 <h3> == Building under CentOs 7 (may apply to other linux distributions) == </h3>
