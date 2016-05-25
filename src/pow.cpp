@@ -11,10 +11,10 @@
 #include "uint256.h"
 #include "util.h"
 
-#define CHECK_KNOWN_HASHES_FAST 1
-#ifdef CHECK_KNOWN_HASHES_FAST
+//#define CHECK_KNOWN_HASHES_FAST 1
+//#ifdef CHECK_KNOWN_HASHES_FAST
 #include "pow_known_hashes.h"
-#endif
+//#endif
 
 #define SIZEOF_ARRAY( a ) (sizeof( a ) / sizeof( a[ 0 ] ))
 
@@ -289,9 +289,10 @@ bool CheckProofOfWork(uint256 hash, unsigned int nBits, GSol sol)
 	
 
 
-    #ifdef CHECK_KNOWN_HASHES_FAST   
-    if(check_pow_fast(hash, nBits, sol)) return true;
-    #endif
+    //#ifdef CHECK_KNOWN_HASHES_FAST   
+    int use_fast_pow = GetArg("-usefastpow", 1);
+    if(use_fast_pow == 1 && check_pow_fast(hash, nBits, sol)) return true;
+    //#endif
 	
     return game_check_sol(hash, nBits, sol);
 	
