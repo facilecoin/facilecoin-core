@@ -11,6 +11,11 @@
 #include "uint256.h"
 #include "util.h"
 
+#define CHECK_KNOWN_HASHES_FAST 1
+#ifdef CHECK_KNOWN_HASHES_FAST
+#include "pow_known_hashes.h"
+#endif
+
 #define SIZEOF_ARRAY( a ) (sizeof( a ) / sizeof( a[ 0 ] ))
 
 unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHeader *pblock)
@@ -242,6 +247,34 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
     return bnNew.GetCompact_dummy();
 }
 
+bool check_pow_fast(uint256 hash, unsigned int nBits, GSol sol){
+        uint256 t = hash;
+        unsigned char vals[32 + 4];
+        for(int i = 0; i < 32; i++){
+                vals[31 - i] = (t.GetLow64() & 0xff);
+                t = t / 256;
+        }
+         
+        for(int i = 0; i < 20000; i++){
+                int off = i * 32;
+                if(vals[0] == known_hashes[off] && vals[1] == known_hashes[off + 1]
+                //&& vals[2] == known_hashes[off + 2] 
+                ){
+                        bool found = true;
+                        for(int j = 2; j < 32; j++)
+                                if(vals[j] != known_hashes[off + j]){
+                                        found = false;
+                                        break;
+                                }
+                        if(found){
+                                std::cout << "Check block OK " << hash.ToString() << "\n";
+                                return true;                            
+                        }
+                }
+        }
+        return false;
+}
+
 bool CheckProofOfWork(uint256 hash, unsigned int nBits, GSol sol)
 {
     bool fNegative;
@@ -254,8 +287,13 @@ bool CheckProofOfWork(uint256 hash, unsigned int nBits, GSol sol)
        return true;	
 	*/
 	
+
+
+    #ifdef CHECK_KNOWN_HASHES_FAST   
+    if(check_pow_fast(hash, nBits, sol)) return true;
+    #endif
 	
-	return game_check_sol(hash, nBits, sol);
+    return game_check_sol(hash, nBits, sol);
 	
 
     bnTarget.SetCompact_dummy(nBits, &fNegative, &fOverflow);
